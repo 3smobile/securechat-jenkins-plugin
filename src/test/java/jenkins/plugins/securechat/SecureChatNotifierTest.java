@@ -47,7 +47,7 @@ public class SecureChatNotifierTest extends TestCase {
         }
         descriptor.setSecureChatService(secureChatServiceStub);
         try {
-            FormValidation result = descriptor.doTestConnection("teamDomain", "authToken", "room", "buildServerUrl");
+            FormValidation result = descriptor.doTestConnection("integrationURL", "buildServerUrl");
             assertEquals(result.kind, expectedResult);
         } catch (Descriptor.FormException e) {
             e.printStackTrace();

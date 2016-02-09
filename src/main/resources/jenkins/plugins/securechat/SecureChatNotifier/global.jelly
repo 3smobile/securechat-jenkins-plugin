@@ -12,20 +12,14 @@
     so it should be straightforward to find them.
   -->
 <f:section title="Global secure.chat Notifier Settings" name="securechat">
-    <f:entry title="Team Subdomain" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatTeamDomain.html">
-        <f:textbox field="teamDomain" name="secureChatTeamDomain" value="${descriptor.getTeamDomain()}" />
-    </f:entry>
-    <f:entry title="Integration Token" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatToken.html">
-        <f:textbox field="token" name="secureChatToken" value="${descriptor.getToken()}" />
-    </f:entry>
-    <f:entry title="Channel" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatRoom.html">
-        <f:textbox field="room" name="secureChatRoom" value="${descriptor.getRoom()}" />
+    <f:entry title="Integration URL" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatIntegrationURL.html">
+        <f:textbox field="integrationURL" name="secureChatIntegrationURL" value="${descriptor.getIntegrationURL()}" />
     </f:entry>
     <f:entry title="Build Server URL" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatBuildServerUrl.html">
         <f:textbox field="buildServerUrl" name="secureChatBuildServerUrl" value="${descriptor.getBuildServerUrl()}" />
     </f:entry>
     <f:validateButton
         title="${%Test Connection}" progress="${%Testing...}"
-        method="testConnection" with="secureChatTeamDomain,secureChatToken,secureChatRoom,secureChatBuildServerUrl" />
+        method="testConnection" with="secureChatIntegrationURL,secureChatBuildServerUrl" />
   </f:section>
 </j:jelly>

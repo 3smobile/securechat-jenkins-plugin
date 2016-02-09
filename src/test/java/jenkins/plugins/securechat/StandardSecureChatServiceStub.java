@@ -4,8 +4,8 @@ public class StandardSecureChatServiceStub extends StandardSecureChatService {
 
     private HttpClientStub httpClientStub;
 
-    public StandardSecureChatServiceStub(String teamDomain, String token, String roomId) {
-        super(teamDomain, token, roomId);
+    public StandardSecureChatServiceStub(String integrationURL) {
+        super(integrationURL);
     }
 
     @Override

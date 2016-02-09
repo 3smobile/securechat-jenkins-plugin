@@ -51,19 +51,12 @@
             </select>
         </f:entry>
 
-        <f:entry title="Team Subdomain" help="${rootURL}/plugin/securechat/help-projectConfig-secureChatTeamDomain.html">
-            <f:textbox name="secureChatTeamDomain" value="${instance.getTeamDomain()}"/>
+        <f:entry title="Integration URL" help="${rootURL}/plugin/securechat/help-projectConfig-secureChatIntegrationURL.html">
+            <f:textbox name="secureChatIntegrationURL" value="${instance.getIntegrationURL()}"/>
         </f:entry>
 
-        <f:entry title="Integration Token" help="${rootURL}/plugin/securechat/help-projectConfig-secureChatToken.html">
-            <f:textbox name="secureChatToken" value="${instance.getAuthToken()}"/>
-        </f:entry>
-
-        <f:entry title="Project Channel" help="${rootURL}/plugin/securechat/help-projectConfig-secureChatRoom.html">
-            <f:textbox name="secureChatRoom" value="${instance.getRoom()}"/>
-        </f:entry>
         <f:validateButton
                 title="${%Test Connection}" progress="${%Testing...}"
-                method="testConnection" with="secureChatTeamDomain,secureChatToken,secureChatRoom"/>
+                method="testConnection" with="secureChatIntegrationURL"/>
     </f:advanced>
 </j:jelly>

@@ -27,10 +27,8 @@ public class SecureChatNotifier extends Notifier {
 
     private static final Logger logger = Logger.getLogger(SecureChatNotifier.class.getName());
 
-    private String teamDomain;
-    private String authToken;
+    private String integrationURL;
     private String buildServerUrl;
-    private String room;
     private String sendAs;
     private boolean startNotification;
     private boolean notifySuccess;
@@ -50,16 +48,8 @@ public class SecureChatNotifier extends Notifier {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    public String getTeamDomain() {
-        return teamDomain;
-    }
-
-    public String getRoom() {
-        return room;
-    }
-
-    public String getAuthToken() {
-        return authToken;
+    public String getIntegrationURL() {
+        return integrationURL;
     }
 
     public String getBuildServerUrl() {
@@ -125,16 +115,14 @@ public class SecureChatNotifier extends Notifier {
     }
 
     @DataBoundConstructor
-    public SecureChatNotifier(final String teamDomain, final String authToken, final String room, final String buildServerUrl,
+    public SecureChatNotifier(final String integrationURL, final String buildServerUrl,
                          final String sendAs, final boolean startNotification, final boolean notifyAborted, final boolean notifyFailure,
                          final boolean notifyNotBuilt, final boolean notifySuccess, final boolean notifyUnstable, final boolean notifyBackToNormal,
                          final boolean notifyRepeatedFailure, final boolean includeTestSummary, CommitInfoChoice commitInfoChoice,
                          boolean includeCustomMessage, String customMessage) {
         super();
-        this.teamDomain = teamDomain;
-        this.authToken = authToken;
+        this.integrationURL = integrationURL;
         this.buildServerUrl = buildServerUrl;
-        this.room = room;
         this.sendAs = sendAs;
         this.startNotification = startNotification;
         this.notifyAborted = notifyAborted;
@@ -155,17 +143,9 @@ public class SecureChatNotifier extends Notifier {
     }
 
     public SecureChatService newSecureChatService(AbstractBuild r, BuildListener listener) {
-        String teamDomain = this.teamDomain;
-        if (StringUtils.isEmpty(teamDomain)) {
-            teamDomain = getDescriptor().getTeamDomain();
-        }
-        String authToken = this.authToken;
-        if (StringUtils.isEmpty(authToken)) {
-            authToken = getDescriptor().getToken();
-        }
-        String room = this.room;
-        if (StringUtils.isEmpty(room)) {
-            room = getDescriptor().getRoom();
+        String integrationURL = this.integrationURL;
+        if (StringUtils.isEmpty(integrationURL)) {
+            integrationURL = getDescriptor().getIntegrationURL();
         }
 
         EnvVars env = null;
@@ -175,11 +155,9 @@ public class SecureChatNotifier extends Notifier {
             listener.getLogger().println("Error retrieving environment vars: " + e.getMessage());
             env = new EnvVars();
         }
-        teamDomain = env.expand(teamDomain);
-        authToken = env.expand(authToken);
-        room = env.expand(room);
+        integrationURL = env.expand(integrationURL);
 
-        return new StandardSecureChatService(teamDomain, authToken, room);
+        return new StandardSecureChatService(integrationURL);
     }
 
     @Override
@@ -204,9 +182,7 @@ public class SecureChatNotifier extends Notifier {
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-        private String teamDomain;
-        private String token;
-        private String room;
+        private String integrationURL;
         private String buildServerUrl;
         private String sendAs;
 
@@ -216,16 +192,8 @@ public class SecureChatNotifier extends Notifier {
             load();
         }
 
-        public String getTeamDomain() {
-            return teamDomain;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public String getRoom() {
-            return room;
+        public String getIntegrationURL() {
+            return integrationURL;
         }
 
         public String getBuildServerUrl() {
@@ -248,9 +216,7 @@ public class SecureChatNotifier extends Notifier {
 
         @Override
         public SecureChatNotifier newInstance(StaplerRequest sr, JSONObject json) {
-            String teamDomain = sr.getParameter("secureChatTeamDomain");
-            String token = sr.getParameter("secureChatToken");
-            String room = sr.getParameter("secureChatRoom");
+            String integrationURL = sr.getParameter("secureChatIntegrationURL");
             boolean startNotification = "true".equals(sr.getParameter("secureChatStartNotification"));
             boolean notifySuccess = "true".equals(sr.getParameter("secureChatNotifySuccess"));
             boolean notifyAborted = "true".equals(sr.getParameter("secureChatNotifyAborted"));
@@ -263,16 +229,14 @@ public class SecureChatNotifier extends Notifier {
             CommitInfoChoice commitInfoChoice = CommitInfoChoice.forDisplayName(sr.getParameter("secureChatCommitInfoChoice"));
             boolean includeCustomMessage = "on".equals(sr.getParameter("includeCustomMessage"));
             String customMessage = sr.getParameter("customMessage");
-            return new SecureChatNotifier(teamDomain, token, room, buildServerUrl, sendAs, startNotification, notifyAborted,
+            return new SecureChatNotifier(integrationURL, buildServerUrl, sendAs, startNotification, notifyAborted,
                     notifyFailure, notifyNotBuilt, notifySuccess, notifyUnstable, notifyBackToNormal, notifyRepeatedFailure,
                     includeTestSummary, commitInfoChoice, includeCustomMessage, customMessage);
         }
 
         @Override
         public boolean configure(StaplerRequest sr, JSONObject formData) throws FormException {
-            teamDomain = sr.getParameter("secureChatTeamDomain");
-            token = sr.getParameter("secureChatToken");
-            room = sr.getParameter("secureChatRoom");
+            integrationURL = sr.getParameter("secureChatIntegrationURL");
             buildServerUrl = sr.getParameter("secureChatBuildServerUrl");
             sendAs = sr.getParameter("secureChatSendAs");
             if(buildServerUrl == null || buildServerUrl == "") {
@@ -286,8 +250,8 @@ public class SecureChatNotifier extends Notifier {
             return super.configure(sr, formData);
         }
 
-        SecureChatService getSecureChatService(final String teamDomain, final String authToken, final String room) {
-            return new StandardSecureChatService(teamDomain, authToken, room);
+        SecureChatService getSecureChatService(final String integrationURL) {
+            return new StandardSecureChatService(integrationURL);
         }
 
         @Override
@@ -295,28 +259,18 @@ public class SecureChatNotifier extends Notifier {
             return "secure.chat Notifications";
         }
 
-        public FormValidation doTestConnection(@QueryParameter("secureChatTeamDomain") final String teamDomain,
-                                               @QueryParameter("secureChatToken") final String authToken,
-                                               @QueryParameter("secureChatRoom") final String room,
+        public FormValidation doTestConnection(@QueryParameter("secureChatIntegrationURL") final String integrationURL,
                                                @QueryParameter("secureChatBuildServerUrl") final String buildServerUrl) throws FormException {
             try {
-                String targetDomain = teamDomain;
-                if (StringUtils.isEmpty(targetDomain)) {
-                    targetDomain = this.teamDomain;
-                }
-                String targetToken = authToken;
-                if (StringUtils.isEmpty(targetToken)) {
-                    targetToken = this.token;
-                }
-                String targetRoom = room;
-                if (StringUtils.isEmpty(targetRoom)) {
-                    targetRoom = this.room;
+                String targetURL = integrationURL;
+                if (StringUtils.isEmpty(targetURL)) {
+                    targetURL = this.integrationURL;
                 }
                 String targetBuildServerUrl = buildServerUrl;
                 if (StringUtils.isEmpty(targetBuildServerUrl)) {
                     targetBuildServerUrl = this.buildServerUrl;
                 }
-                SecureChatService testSecureChatService = getSecureChatService(targetDomain, targetToken, targetRoom);
+                SecureChatService testSecureChatService = getSecureChatService(targetURL);
                 String message = "secure.chat/Jenkins plugin: you're all set on " + targetBuildServerUrl;
                 boolean success = testSecureChatService.publish(message, "good");
                 return success ? FormValidation.ok("Success") : FormValidation.error("Failure");

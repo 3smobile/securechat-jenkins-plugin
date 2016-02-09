@@ -14,7 +14,7 @@ public class StandardSecureChatServiceTest {
      */
     @Test
     public void publishWithBadHostShouldNotRethrowExceptions() {
-        StandardSecureChatService service = new StandardSecureChatService("foo", "token", "#general");
+        StandardSecureChatService service = new StandardSecureChatService("url");
         service.setHost("hostvaluethatwillcausepublishtofail");
         service.publish("message");
     }
@@ -24,7 +24,7 @@ public class StandardSecureChatServiceTest {
      */
     @Test
     public void invalidTeamDomainShouldFail() {
-        StandardSecureChatService service = new StandardSecureChatService("my", "token", "#general");
+        StandardSecureChatService service = new StandardSecureChatService("url");
         service.publish("message");
     }
 
@@ -33,13 +33,13 @@ public class StandardSecureChatServiceTest {
      */
     @Test
     public void invalidTokenShouldFail() {
-        StandardSecureChatService service = new StandardSecureChatService("tinyspeck", "token", "#general");
+        StandardSecureChatService service = new StandardSecureChatService("url");
         service.publish("message");
     }
 
     @Test
     public void publishToASingleRoomSendsASingleMessage() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "#room1");
+        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("url");
         HttpClientStub httpClientStub = new HttpClientStub();
         service.setHttpClient(httpClientStub);
         service.publish("message");
@@ -47,26 +47,8 @@ public class StandardSecureChatServiceTest {
     }
 
     @Test
-    public void publishToMultipleRoomsSendsAMessageToEveryRoom() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "#room1,#room2,#room3");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        service.setHttpClient(httpClientStub);
-        service.publish("message");
-        assertEquals(3, service.getHttpClient().getNumberOfCallsToExecuteMethod());
-    }
-
-    @Test
     public void successfulPublishToASingleRoomReturnsTrue() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "#room1");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setHttpStatus(HttpStatus.SC_OK);
-        service.setHttpClient(httpClientStub);
-        assertTrue(service.publish("message"));
-    }
-
-    @Test
-    public void successfulPublishToMultipleRoomsReturnsTrue() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "#room1,#room2,#room3");
+        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("url");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_OK);
         service.setHttpClient(httpClientStub);
@@ -75,7 +57,7 @@ public class StandardSecureChatServiceTest {
 
     @Test
     public void failedPublishToASingleRoomReturnsFalse() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "#room1");
+        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("url");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_NOT_FOUND);
         service.setHttpClient(httpClientStub);
@@ -83,18 +65,8 @@ public class StandardSecureChatServiceTest {
     }
 
     @Test
-    public void singleFailedPublishToMultipleRoomsReturnsFalse() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "#room1,#room2,#room3");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setFailAlternateResponses(true);
-        httpClientStub.setHttpStatus(HttpStatus.SC_OK);
-        service.setHttpClient(httpClientStub);
-        assertFalse(service.publish("message"));
-    }
-
-    @Test
     public void publishToEmptyRoomReturnsTrue() {
-        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("domain", "token", "");
+        StandardSecureChatServiceStub service = new StandardSecureChatServiceStub("url");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_OK);
         service.setHttpClient(httpClientStub);

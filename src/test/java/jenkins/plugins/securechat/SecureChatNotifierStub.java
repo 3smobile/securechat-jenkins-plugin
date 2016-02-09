@@ -2,12 +2,12 @@ package jenkins.plugins.securechat;
 
 public class SecureChatNotifierStub extends SecureChatNotifier {
 
-    public SecureChatNotifierStub(String teamDomain, String authToken, String room, String buildServerUrl,
+    public SecureChatNotifierStub(String integrationURL, String buildServerUrl,
                              String sendAs, boolean startNotification, boolean notifyAborted, boolean notifyFailure,
                              boolean notifyNotBuilt, boolean notifySuccess, boolean notifyUnstable, boolean notifyBackToNormal,
                              boolean notifyRepeatedFailure, boolean includeTestSummary, CommitInfoChoice commitInfoChoice,
                              boolean includeCustomMessage, String customMessage) {
-        super(teamDomain, authToken, room, buildServerUrl, sendAs, startNotification, notifyAborted, notifyFailure,
+        super(integrationURL, buildServerUrl, sendAs, startNotification, notifyAborted, notifyFailure,
                 notifyNotBuilt, notifySuccess, notifyUnstable, notifyBackToNormal, notifyRepeatedFailure,
                 includeTestSummary, commitInfoChoice, includeCustomMessage, customMessage);
     }
@@ -21,7 +21,7 @@ public class SecureChatNotifierStub extends SecureChatNotifier {
         }
 
         @Override
-        SecureChatService getSecureChatService(final String teamDomain, final String authToken, final String room) {
+        SecureChatService getSecureChatService(final String integrationURL) {
             return secureChatService;
         }
 
