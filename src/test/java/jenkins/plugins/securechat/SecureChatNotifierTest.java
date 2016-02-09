@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -12,21 +12,21 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class SlackNotifierTest extends TestCase {
+public class SecureChatNotifierTest extends TestCase {
 
-    private SlackNotifierStub.DescriptorImplStub descriptor;
-    private SlackServiceStub slackServiceStub;
+    private SecureChatNotifierStub.DescriptorImplStub descriptor;
+    private SecureChatServiceStub secureChatServiceStub;
     private boolean response;
     private FormValidation.Kind expectedResult;
 
     @Before
     @Override
     public void setUp() {
-        descriptor = new SlackNotifierStub.DescriptorImplStub();
+        descriptor = new SecureChatNotifierStub.DescriptorImplStub();
     }
 
-    public SlackNotifierTest(SlackServiceStub slackServiceStub, boolean response, FormValidation.Kind expectedResult) {
-        this.slackServiceStub = slackServiceStub;
+    public SecureChatNotifierTest(SecureChatServiceStub secureChatServiceStub, boolean response, FormValidation.Kind expectedResult) {
+        this.secureChatServiceStub = secureChatServiceStub;
         this.response = response;
         this.expectedResult = expectedResult;
     }
@@ -34,18 +34,18 @@ public class SlackNotifierTest extends TestCase {
     @Parameterized.Parameters
     public static Collection businessTypeKeys() {
         return Arrays.asList(new Object[][]{
-                {new SlackServiceStub(), true, FormValidation.Kind.OK},
-                {new SlackServiceStub(), false, FormValidation.Kind.ERROR},
+                {new SecureChatServiceStub(), true, FormValidation.Kind.OK},
+                {new SecureChatServiceStub(), false, FormValidation.Kind.ERROR},
                 {null, false, FormValidation.Kind.ERROR}
         });
     }
 
     @Test
     public void testDoTestConnection() {
-        if (slackServiceStub != null) {
-            slackServiceStub.setResponse(response);
+        if (secureChatServiceStub != null) {
+            secureChatServiceStub.setResponse(response);
         }
-        descriptor.setSlackService(slackServiceStub);
+        descriptor.setSecureChatService(secureChatServiceStub);
         try {
             FormValidation result = descriptor.doTestConnection("teamDomain", "authToken", "room", "buildServerUrl");
             assertEquals(result.kind, expectedResult);
@@ -55,7 +55,7 @@ public class SlackNotifierTest extends TestCase {
         }
     }
 
-    public static class SlackServiceStub implements SlackService {
+    public static class SecureChatServiceStub implements SecureChatService {
 
         private boolean response;
 

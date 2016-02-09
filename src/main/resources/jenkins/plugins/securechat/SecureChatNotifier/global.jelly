@@ -11,21 +11,21 @@
     tags they use. Views are always organized according to its owner class,
     so it should be straightforward to find them.
   -->
-<f:section title="Global Slack Notifier Settings" name="slack">
-    <f:entry title="Team Subdomain" help="${rootURL}/plugin/slack/help-globalConfig-slackTeamDomain.html">
-        <f:textbox field="teamDomain" name="slackTeamDomain" value="${descriptor.getTeamDomain()}" />
+<f:section title="Global secure.chat Notifier Settings" name="securechat">
+    <f:entry title="Team Subdomain" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatTeamDomain.html">
+        <f:textbox field="teamDomain" name="secureChatTeamDomain" value="${descriptor.getTeamDomain()}" />
     </f:entry>
-    <f:entry title="Integration Token" help="${rootURL}/plugin/slack/help-globalConfig-slackToken.html">
-        <f:textbox field="token" name="slackToken" value="${descriptor.getToken()}" />
+    <f:entry title="Integration Token" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatToken.html">
+        <f:textbox field="token" name="secureChatToken" value="${descriptor.getToken()}" />
     </f:entry>
-    <f:entry title="Channel" help="${rootURL}/plugin/slack/help-globalConfig-slackRoom.html">
-        <f:textbox field="room" name="slackRoom" value="${descriptor.getRoom()}" />
+    <f:entry title="Channel" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatRoom.html">
+        <f:textbox field="room" name="secureChatRoom" value="${descriptor.getRoom()}" />
     </f:entry>
-    <f:entry title="Build Server URL" help="${rootURL}/plugin/slack/help-globalConfig-slackBuildServerUrl.html">
-        <f:textbox field="buildServerUrl" name="slackBuildServerUrl" value="${descriptor.getBuildServerUrl()}" />
+    <f:entry title="Build Server URL" help="${rootURL}/plugin/securechat/help-globalConfig-secureChatBuildServerUrl.html">
+        <f:textbox field="buildServerUrl" name="secureChatBuildServerUrl" value="${descriptor.getBuildServerUrl()}" />
     </f:entry>
     <f:validateButton
         title="${%Test Connection}" progress="${%Testing...}"
-        method="testConnection" with="slackTeamDomain,slackToken,slackRoom,slackBuildServerUrl" />
+        method="testConnection" with="secureChatTeamDomain,secureChatToken,secureChatRoom,secureChatBuildServerUrl" />
   </f:section>
 </j:jelly>

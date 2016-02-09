@@ -1,8 +1,8 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
-public class SlackNotifierStub extends SlackNotifier {
+public class SecureChatNotifierStub extends SecureChatNotifier {
 
-    public SlackNotifierStub(String teamDomain, String authToken, String room, String buildServerUrl,
+    public SecureChatNotifierStub(String teamDomain, String authToken, String room, String buildServerUrl,
                              String sendAs, boolean startNotification, boolean notifyAborted, boolean notifyFailure,
                              boolean notifyNotBuilt, boolean notifySuccess, boolean notifyUnstable, boolean notifyBackToNormal,
                              boolean notifyRepeatedFailure, boolean includeTestSummary, CommitInfoChoice commitInfoChoice,
@@ -12,21 +12,21 @@ public class SlackNotifierStub extends SlackNotifier {
                 includeTestSummary, commitInfoChoice, includeCustomMessage, customMessage);
     }
 
-    public static class DescriptorImplStub extends SlackNotifier.DescriptorImpl {
+    public static class DescriptorImplStub extends SecureChatNotifier.DescriptorImpl {
 
-        private SlackService slackService;
+        private SecureChatService secureChatService;
 
         @Override
         public synchronized void load() {
         }
 
         @Override
-        SlackService getSlackService(final String teamDomain, final String authToken, final String room) {
-            return slackService;
+        SecureChatService getSecureChatService(final String teamDomain, final String authToken, final String room) {
+            return secureChatService;
         }
 
-        public void setSlackService(SlackService slackService) {
-            this.slackService = slackService;
+        public void setSecureChatService(SecureChatService secureChatService) {
+            this.secureChatService = secureChatService;
         }
     }
 }

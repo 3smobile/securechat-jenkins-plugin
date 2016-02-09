@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
 public enum CommitInfoChoice {
     NONE("nothing about commits",                             false, false),

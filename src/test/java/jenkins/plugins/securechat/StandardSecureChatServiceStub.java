@@ -1,10 +1,10 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
-public class StandardSlackServiceStub extends StandardSlackService {
+public class StandardSecureChatServiceStub extends StandardSecureChatService {
 
     private HttpClientStub httpClientStub;
 
-    public StandardSlackServiceStub(String teamDomain, String token, String roomId) {
+    public StandardSecureChatServiceStub(String teamDomain, String token, String roomId) {
         super(teamDomain, token, roomId);
     }
 

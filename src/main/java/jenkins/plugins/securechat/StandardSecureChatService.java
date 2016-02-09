@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -15,16 +15,16 @@ import hudson.ProxyConfiguration;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 
-public class StandardSlackService implements SlackService {
+public class StandardSecureChatService implements SecureChatService {
 
-    private static final Logger logger = Logger.getLogger(StandardSlackService.class.getName());
+    private static final Logger logger = Logger.getLogger(StandardSecureChatService.class.getName());
 
-    private String host = "slack.com";
+    private String host = "secure.chat";
     private String teamDomain;
     private String token;
     private String[] roomIds;
 
-    public StandardSlackService(String teamDomain, String token, String roomId) {
+    public StandardSecureChatService(String teamDomain, String token, String roomId) {
         super();
         this.teamDomain = teamDomain;
         this.token = token;
@@ -72,14 +72,14 @@ public class StandardSlackService implements SlackService {
                 int responseCode = client.executeMethod(post);
                 String response = post.getResponseBodyAsString();
                 if(responseCode != HttpStatus.SC_OK) {
-                    logger.log(Level.WARNING, "Slack post may have failed. Response: " + response);
+                    logger.log(Level.WARNING, "secure.chat post may have failed. Response: " + response);
                     result = false;
                 }
                 else {
                     logger.info("Posting succeeded");
                 }
             } catch (Exception e) {
-                logger.log(Level.WARNING, "Error posting to Slack", e);
+                logger.log(Level.WARNING, "Error posting to secure.chat", e);
                 result = false;
             } finally {
                 post.releaseConnection();
