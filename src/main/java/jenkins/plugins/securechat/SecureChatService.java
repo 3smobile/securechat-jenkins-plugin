@@ -1,6 +1,6 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
-public interface SlackService {
+public interface SecureChatService {
     boolean publish(String message);
 
     boolean publish(String message, String color);

@@ -17,12 +17,12 @@
         <version>1.567</version>
     </parent>
 
-    <artifactId>slack</artifactId>
+    <artifactId>securechat</artifactId>
     <packaging>hpi</packaging>
     <version>2.0-SNAPSHOT</version>
-    <name>Slack Notification Plugin</name>
-    <description>A Build status publisher that notifies channels on a Slack team</description>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin</url>
+    <name>secure.chat Notification Plugin</name>
+    <description>A Build status publisher that notifies channels on a secure.chat team</description>
+    <url></url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,9 +37,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/jenkinsci/slack-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/slack-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/slack-plugin</url>
+        <connection>scm:git:ssh://git@github.com/3smobile/securechat-jenkins-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/3smobile/securechat-jenkins-plugin.git</developerConnection>
+        <url>https://github.com/3smobile/securechat-jenkins-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -118,20 +118,9 @@
 
     <!--
       The developers show up as current maintainers in the Jenkins wiki.
-      https://wiki.jenkins-ci.org/display/JENKINS/Slack+Plugin
 
       The id should be the jenkinsci.org username and not your GitHub username.
     -->
     <developers>
-        <developer>
-            <id>sag47</id>
-            <name>Sam Gleske</name>
-            <email>sam.mxracer@gmail.com</email>
-            <url>https://github.com/samrocketman</url>
-            <roles>
-                <role>maintainer</role>
-            </roles>
-            <timezone>America/Los_Angeles</timezone>
-        </developer>
     </developers>
 </project>

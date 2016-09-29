@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.securechat;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -23,14 +23,12 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class SlackNotifier extends Notifier {
+public class SecureChatNotifier extends Notifier {
 
-    private static final Logger logger = Logger.getLogger(SlackNotifier.class.getName());
+    private static final Logger logger = Logger.getLogger(SecureChatNotifier.class.getName());
 
-    private String teamDomain;
-    private String authToken;
+    private String integrationURL;
     private String buildServerUrl;
-    private String room;
     private String sendAs;
     private boolean startNotification;
     private boolean notifySuccess;
@@ -50,16 +48,8 @@ public class SlackNotifier extends Notifier {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    public String getTeamDomain() {
-        return teamDomain;
-    }
-
-    public String getRoom() {
-        return room;
-    }
-
-    public String getAuthToken() {
-        return authToken;
+    public String getIntegrationURL() {
+        return integrationURL;
     }
 
     public String getBuildServerUrl() {
@@ -125,16 +115,14 @@ public class SlackNotifier extends Notifier {
     }
 
     @DataBoundConstructor
-    public SlackNotifier(final String teamDomain, final String authToken, final String room, final String buildServerUrl,
+    public SecureChatNotifier(final String integrationURL, final String buildServerUrl,
                          final String sendAs, final boolean startNotification, final boolean notifyAborted, final boolean notifyFailure,
                          final boolean notifyNotBuilt, final boolean notifySuccess, final boolean notifyUnstable, final boolean notifyBackToNormal,
                          final boolean notifyRepeatedFailure, final boolean includeTestSummary, CommitInfoChoice commitInfoChoice,
                          boolean includeCustomMessage, String customMessage) {
         super();
-        this.teamDomain = teamDomain;
-        this.authToken = authToken;
+        this.integrationURL = integrationURL;
         this.buildServerUrl = buildServerUrl;
-        this.room = room;
         this.sendAs = sendAs;
         this.startNotification = startNotification;
         this.notifyAborted = notifyAborted;
@@ -154,18 +142,10 @@ public class SlackNotifier extends Notifier {
         return BuildStepMonitor.NONE;
     }
 
-    public SlackService newSlackService(AbstractBuild r, BuildListener listener) {
-        String teamDomain = this.teamDomain;
-        if (StringUtils.isEmpty(teamDomain)) {
-            teamDomain = getDescriptor().getTeamDomain();
-        }
-        String authToken = this.authToken;
-        if (StringUtils.isEmpty(authToken)) {
-            authToken = getDescriptor().getToken();
-        }
-        String room = this.room;
-        if (StringUtils.isEmpty(room)) {
-            room = getDescriptor().getRoom();
+    public SecureChatService newSecureChatService(AbstractBuild r, BuildListener listener) {
+        String integrationURL = this.integrationURL;
+        if (StringUtils.isEmpty(integrationURL)) {
+            integrationURL = getDescriptor().getIntegrationURL();
         }
 
         EnvVars env = null;
@@ -175,11 +155,9 @@ public class SlackNotifier extends Notifier {
             listener.getLogger().println("Error retrieving environment vars: " + e.getMessage());
             env = new EnvVars();
         }
-        teamDomain = env.expand(teamDomain);
-        authToken = env.expand(authToken);
-        room = env.expand(room);
+        integrationURL = env.expand(integrationURL);
 
-        return new StandardSlackService(teamDomain, authToken, room);
+        return new StandardSecureChatService(integrationURL);
     }
 
     @Override
@@ -192,9 +170,9 @@ public class SlackNotifier extends Notifier {
         if (startNotification) {
             Map<Descriptor<Publisher>, Publisher> map = build.getProject().getPublishersList().toMap();
             for (Publisher publisher : map.values()) {
-                if (publisher instanceof SlackNotifier) {
+                if (publisher instanceof SecureChatNotifier) {
                     logger.info("Invoking Started...");
-                    new ActiveNotifier((SlackNotifier) publisher, listener).started(build);
+                    new ActiveNotifier((SecureChatNotifier) publisher, listener).started(build);
                 }
             }
         }
@@ -204,9 +182,7 @@ public class SlackNotifier extends Notifier {
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-        private String teamDomain;
-        private String token;
-        private String room;
+        private String integrationURL;
         private String buildServerUrl;
         private String sendAs;
 
@@ -216,16 +192,8 @@ public class SlackNotifier extends Notifier {
             load();
         }
 
-        public String getTeamDomain() {
-            return teamDomain;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public String getRoom() {
-            return room;
+        public String getIntegrationURL() {
+            return integrationURL;
         }
 
         public String getBuildServerUrl() {
@@ -247,34 +215,30 @@ public class SlackNotifier extends Notifier {
         }
 
         @Override
-        public SlackNotifier newInstance(StaplerRequest sr, JSONObject json) {
-            String teamDomain = sr.getParameter("slackTeamDomain");
-            String token = sr.getParameter("slackToken");
-            String room = sr.getParameter("slackRoom");
-            boolean startNotification = "true".equals(sr.getParameter("slackStartNotification"));
-            boolean notifySuccess = "true".equals(sr.getParameter("slackNotifySuccess"));
-            boolean notifyAborted = "true".equals(sr.getParameter("slackNotifyAborted"));
-            boolean notifyNotBuilt = "true".equals(sr.getParameter("slackNotifyNotBuilt"));
-            boolean notifyUnstable = "true".equals(sr.getParameter("slackNotifyUnstable"));
-            boolean notifyFailure = "true".equals(sr.getParameter("slackNotifyFailure"));
-            boolean notifyBackToNormal = "true".equals(sr.getParameter("slackNotifyBackToNormal"));
-            boolean notifyRepeatedFailure = "true".equals(sr.getParameter("slackNotifyRepeatedFailure"));
+        public SecureChatNotifier newInstance(StaplerRequest sr, JSONObject json) {
+            String integrationURL = sr.getParameter("secureChatIntegrationURL");
+            boolean startNotification = "true".equals(sr.getParameter("secureChatStartNotification"));
+            boolean notifySuccess = "true".equals(sr.getParameter("secureChatNotifySuccess"));
+            boolean notifyAborted = "true".equals(sr.getParameter("secureChatNotifyAborted"));
+            boolean notifyNotBuilt = "true".equals(sr.getParameter("secureChatNotifyNotBuilt"));
+            boolean notifyUnstable = "true".equals(sr.getParameter("secureChatNotifyUnstable"));
+            boolean notifyFailure = "true".equals(sr.getParameter("secureChatNotifyFailure"));
+            boolean notifyBackToNormal = "true".equals(sr.getParameter("secureChatNotifyBackToNormal"));
+            boolean notifyRepeatedFailure = "true".equals(sr.getParameter("secureChatNotifyRepeatedFailure"));
             boolean includeTestSummary = "true".equals(sr.getParameter("includeTestSummary"));
-            CommitInfoChoice commitInfoChoice = CommitInfoChoice.forDisplayName(sr.getParameter("slackCommitInfoChoice"));
+            CommitInfoChoice commitInfoChoice = CommitInfoChoice.forDisplayName(sr.getParameter("secureChatCommitInfoChoice"));
             boolean includeCustomMessage = "on".equals(sr.getParameter("includeCustomMessage"));
             String customMessage = sr.getParameter("customMessage");
-            return new SlackNotifier(teamDomain, token, room, buildServerUrl, sendAs, startNotification, notifyAborted,
+            return new SecureChatNotifier(integrationURL, buildServerUrl, sendAs, startNotification, notifyAborted,
                     notifyFailure, notifyNotBuilt, notifySuccess, notifyUnstable, notifyBackToNormal, notifyRepeatedFailure,
                     includeTestSummary, commitInfoChoice, includeCustomMessage, customMessage);
         }
 
         @Override
         public boolean configure(StaplerRequest sr, JSONObject formData) throws FormException {
-            teamDomain = sr.getParameter("slackTeamDomain");
-            token = sr.getParameter("slackToken");
-            room = sr.getParameter("slackRoom");
-            buildServerUrl = sr.getParameter("slackBuildServerUrl");
-            sendAs = sr.getParameter("slackSendAs");
+            integrationURL = sr.getParameter("secureChatIntegrationURL");
+            buildServerUrl = sr.getParameter("secureChatBuildServerUrl");
+            sendAs = sr.getParameter("secureChatSendAs");
             if(buildServerUrl == null || buildServerUrl == "") {
                 JenkinsLocationConfiguration jenkinsConfig = new JenkinsLocationConfiguration();
                 buildServerUrl = jenkinsConfig.getUrl();
@@ -286,39 +250,29 @@ public class SlackNotifier extends Notifier {
             return super.configure(sr, formData);
         }
 
-        SlackService getSlackService(final String teamDomain, final String authToken, final String room) {
-            return new StandardSlackService(teamDomain, authToken, room);
+        SecureChatService getSecureChatService(final String integrationURL) {
+            return new StandardSecureChatService(integrationURL);
         }
 
         @Override
         public String getDisplayName() {
-            return "Slack Notifications";
+            return "secure.chat Notifications";
         }
 
-        public FormValidation doTestConnection(@QueryParameter("slackTeamDomain") final String teamDomain,
-                                               @QueryParameter("slackToken") final String authToken,
-                                               @QueryParameter("slackRoom") final String room,
-                                               @QueryParameter("slackBuildServerUrl") final String buildServerUrl) throws FormException {
+        public FormValidation doTestConnection(@QueryParameter("secureChatIntegrationURL") final String integrationURL,
+                                               @QueryParameter("secureChatBuildServerUrl") final String buildServerUrl) throws FormException {
             try {
-                String targetDomain = teamDomain;
-                if (StringUtils.isEmpty(targetDomain)) {
-                    targetDomain = this.teamDomain;
-                }
-                String targetToken = authToken;
-                if (StringUtils.isEmpty(targetToken)) {
-                    targetToken = this.token;
-                }
-                String targetRoom = room;
-                if (StringUtils.isEmpty(targetRoom)) {
-                    targetRoom = this.room;
+                String targetURL = integrationURL;
+                if (StringUtils.isEmpty(targetURL)) {
+                    targetURL = this.integrationURL;
                 }
                 String targetBuildServerUrl = buildServerUrl;
                 if (StringUtils.isEmpty(targetBuildServerUrl)) {
                     targetBuildServerUrl = this.buildServerUrl;
                 }
-                SlackService testSlackService = getSlackService(targetDomain, targetToken, targetRoom);
-                String message = "Slack/Jenkins plugin: you're all set on " + targetBuildServerUrl;
-                boolean success = testSlackService.publish(message, "good");
+                SecureChatService testSecureChatService = getSecureChatService(targetURL);
+                String message = "secure.chat/Jenkins plugin: you're all set on " + targetBuildServerUrl;
+                boolean success = testSecureChatService.publish(message, "good");
                 return success ? FormValidation.ok("Success") : FormValidation.error("Failure");
             } catch (Exception e) {
                 return FormValidation.error("Client error : " + e.getMessage());
